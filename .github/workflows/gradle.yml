@@ -23,6 +23,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -41,17 +42,17 @@ jobs:
         working-directory: ${{ github.workspace }}
         shell: pwsh
         run: |
-          # Получаем путь к allurectl из шага setup
-          $allurectlPath = "$env:RUNNER_TOOL_CACHE\allurectl\latest\allurectl.exe"
+          # Фиксированный путь к allurectl.exe
+          $allurectlPath = "C:\actions-runner\_work\_tool\allurectl\2.17.0\amd64\allurectl.exe"
           Write-Host "Using allurectl at: $allurectlPath"
 
-          # Проверяем, что бинарь существует
+          # Проверка существования бинаря
           if (-Not (Test-Path $allurectlPath)) {
             Write-Error "allurectl.exe не найден!"
             exit 1
           }
 
-          # Запускаем тесты через allurectl watch
+          # Запуск тестов через allurectl watch
           & $allurectlPath watch -- .\gradlew.bat clean test
         env:
           ALLURE_RESULTS: ${{ env.ALLURE_RESULTS }}
