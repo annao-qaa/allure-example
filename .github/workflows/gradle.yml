@@ -28,15 +28,28 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
           cache: 'gradle'
-      - uses: allure-framework/setup-allurectl@v1
+
+      - name: Setup AllureCTL
+        uses: allure-framework/setup-allurectl@v1
+        id: allurectl
         with:
           allure-endpoint: http://localhost:8083
           allure-token: ${{ secrets.ALLURE_TOKEN_FOR_SELFHOSTED }}
           allure-project-id: 2
-      - name: Run Tests
+
+      - name: Run Tests with AllureCTL Watch
         working-directory: ${{ github.workspace }}
+        shell: pwsh
         run: |
-          echo "Current dir: $(pwd)"
-          .\gradlew.bat clean test
+          # Получаем путь к allurectl из шага setup
+          $allurectlPath = "${{ steps.allurectl.outputs.allurectl-path }}"
+          Write-Host "Using allurectl at: $allurectlPath"
+
+          if (-Not (Test-Path $allurectlPath)) {
+            Write-Error "allurectl.exe не найден!"
+            exit 1
+          }
+
+          & $allurectlPath watch -- .\gradlew.bat clean test
         env:
           ALLURE_RESULTS: ${{ env.ALLURE_RESULTS }}
