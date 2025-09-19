@@ -42,7 +42,7 @@ jobs:
         shell: pwsh
         run: |
           # Получаем путь к allurectl из шага setup
-          $allurectlPath = "${{ steps.allurectl.outputs.allurectl-path }}"
+          $allurectlPath = "$env:RUNNER_TOOL_CACHE\allurectl\latest\allurectl.exe"
           Write-Host "Using allurectl at: $allurectlPath"
 
           # Проверяем, что бинарь существует
