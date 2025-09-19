@@ -45,11 +45,13 @@ jobs:
           $allurectlPath = "${{ steps.allurectl.outputs.allurectl-path }}"
           Write-Host "Using allurectl at: $allurectlPath"
 
+          # Проверяем, что бинарь существует
           if (-Not (Test-Path $allurectlPath)) {
             Write-Error "allurectl.exe не найден!"
             exit 1
           }
 
+          # Запускаем тесты через allurectl watch
           & $allurectlPath watch -- .\gradlew.bat clean test
         env:
           ALLURE_RESULTS: ${{ env.ALLURE_RESULTS }}
